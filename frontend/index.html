@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K8s Homework</title>
+</head>
+<body>
+    <h1>Simple Message Board</h1>
+    <input type="text" id="msgInput" placeholder="Type a message...">
+    <button onclick="sendMsg()">Submit</button>
+    <ul id="list"></ul>
+
+    <script>
+        const API_URL = "http://localhost:5000/messages"; 
+
+        async function load() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                document.getElementById('list').innerHTML = data.map(m => `<li>${m}</li>`).join('');
+            } catch (e) { console.log(e); }
+        }
+
+        async function sendMsg() {
+            const content = document.getElementById('msgInput').value;
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({content})
+            });
+            document.getElementById('msgInput').value = '';
+            load();
+        }
+        load();
+    </script>
+</body>
+</html>
